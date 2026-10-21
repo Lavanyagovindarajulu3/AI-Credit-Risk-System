@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}
+Application Details - Admin
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-file-earmark-text text-primary me-2"></i>
+
+                Application Details
+
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Admin view of loan application #{{ application.id }}
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('main.admin_dashboard') }}"
+           class="btn btn-outline-primary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- APPLICANT INFORMATION -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0">
+
+            <h5 class="fw-bold mb-0">
+
+                <i class="bi bi-person text-primary me-2"></i>
+
+                Applicant Information
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="text-secondary">
+                        Applicant Name
+                    </label>
+
+                    <h6 class="fw-bold">
+                        {{ application.applicant_name|default('--') }}
+                    </h6>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="text-secondary">
+                        Email
+                    </label>
+
+                    <h6 class="fw-bold">
+                        {{ application.applicant_email|default('--') }}
+                    </h6>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="text-secondary">
+                        Application ID
+                    </label>
+
+                    <h6 class="fw-bold">
+                        #{{ application.id }}
+                    </h6>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="text-secondary">
+                        Application Date
+                    </label>
+
+                    <h6 class="fw-bold">
+
+                        {{ application.created_at.strftime('%d-%m-%Y')
+                           if application.created_at
+                           else '--' }}
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOAN INFORMATION -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0">
+
+            <h5 class="fw-bold mb-0">
+
+                <i class="bi bi-cash-stack text-primary me-2"></i>
+
+                Loan Information
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+
+                    <p class="text-secondary mb-1">
+                        Loan Amount
+                    </p>
+
+                    <h5 class="fw-bold">
+
+                        ₹{{ "{:,.2f}".format(
+                            application.loan_amount|float
+                        ) }}
+
+                    </h5>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <p class="text-secondary mb-1">
+                        Loan Term
+                    </p>
+
+                    <h5 class="fw-bold">
+                        {{ application.loan_term|default('--') }}
+                    </h5>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <p class="text-secondary mb-1">
+                        Existing Loans
+                    </p>
+
+                    <h5 class="fw-bold">
+                        {{ application.existing_loans|default('--') }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CREDIT ASSESSMENT -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0">
+
+            <h5 class="fw-bold mb-0">
+
+                <i class="bi bi-cpu text-primary me-2"></i>
+
+                AI Credit Assessment
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <!-- CREDIT SCORE -->
+
+                <div class="col-md-4">
+
+                    <div class="text-center bg-light rounded-3 p-4">
+
+                        <p class="text-secondary mb-2">
+                            Credit Score
+                        </p>
+
+                        <div class="display-5 fw-bold text-primary">
+
+                            {{ application.credit_score|default('--') }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RISK -->
+
+                <div class="col-md-4">
+
+                    <div class="text-center bg-light rounded-3 p-4">
+
+                        <p class="text-secondary mb-2">
+                            Risk Level
+                        </p>
+
+                        {% if application.risk_level == 'Low' %}
+
+                            <span class="badge bg-success fs-6">
+                                Low
+                            </span>
+
+                        {% elif application.risk_level == 'Medium' %}
+
+                            <span class="badge bg-warning text-dark fs-6">
+                                Medium
+                            </span>
+
+                        {% elif application.risk_level == 'High' %}
+
+                            <span class="badge bg-danger fs-6">
+                                High
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary fs-6">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECOMMENDATION -->
+
+                <div class="col-md-4">
+
+                    <div class="text-center bg-light rounded-3 p-4">
+
+                        <p class="text-secondary mb-2">
+                            Recommendation
+                        </p>
+
+                        {% if application.recommendation == 'Approve' %}
+
+                            <span class="badge bg-success fs-6">
+                                Approve
+                            </span>
+
+                        {% elif application.recommendation == 'Review' %}
+
+                            <span class="badge bg-warning text-dark fs-6">
+                                Review
+                            </span>
+
+                        {% elif application.recommendation == 'Reject' %}
+
+                            <span class="badge bg-danger fs-6">
+                                Reject
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary fs-6">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RISK PROBABILITY -->
+
+            {% if application.risk_probability %}
+
+            <div class="mt-4">
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span class="fw-semibold">
+                        Risk Probability
+                    </span>
+
+                    <span class="fw-bold">
+
+                        {{ (application.risk_probability * 100)|round(2) }}%
+
+                    </span>
+
+                </div>
+
+                <div class="progress"
+                     style="height: 10px;">
+
+                    <div class="progress-bar bg-danger"
+                         style="width:
+                         {{ (application.risk_probability * 100)|round(2) }}%;">
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- PREDICTION REASON -->
+
+            {% if application.prediction_reason %}
+
+            <div class="alert alert-light border mt-4 mb-0">
+
+                <strong>
+
+                    <i class="bi bi-lightbulb me-1"></i>
+
+                    Assessment Summary
+
+                </strong>
+
+                <p class="mb-0 mt-2 text-secondary">
+
+                    {{ application.prediction_reason }}
+
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Application Status
+                    </h5>
+
+                    <p class="text-secondary mb-0">
+                        Current processing status
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    {% if application.application_status == 'Approved' %}
+
+                        <span class="badge bg-success fs-6 px-3 py-2">
+                            Approved
+                        </span>
+
+                    {% elif application.application_status == 'Rejected' %}
+
+                        <span class="badge bg-danger fs-6 px-3 py-2">
+                            Rejected
+                        </span>
+
+                    {% elif application.application_status == 'Processed' %}
+
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            Processed
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                            Pending
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BACK BUTTON -->
+
+    <div class="text-center">
+
+        <a href="{{ url_for('main.admin_dashboard') }}"
+           class="btn btn-primary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Admin Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

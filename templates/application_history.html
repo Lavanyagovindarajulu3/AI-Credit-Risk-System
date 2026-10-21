@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}
+Application History
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5 bg-light min-vh-100">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h2 class="fw-bold mb-1">
+                    Application History
+                </h2>
+
+                <p class="text-secondary mb-0">
+                    View all your loan applications and AI assessments.
+                </p>
+            </div>
+
+            <a href="{{ url_for('main.loan_application') }}"
+               class="btn btn-primary">
+
+                + New Application
+
+            </a>
+
+        </div>
+
+
+        {% if applications %}
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Loan Amount</th>
+                                <th>Credit Score</th>
+                                <th>Risk</th>
+                                <th>Recommendation</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for application in applications %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ application.id }}
+                                </td>
+
+                                <td>
+                                    ₹{{ "{:,.2f}".format(
+                                        application.loan_amount|float
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        {{ application.credit_score }}
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                    {% if application.risk_level == "Low" %}
+
+                                        <span class="badge bg-success">
+                                            Low
+                                        </span>
+
+                                    {% elif application.risk_level == "Medium" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Medium
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            High
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ application.recommendation }}
+                                </td>
+
+                                <td>
+                                    {{ application.application_status }}
+                                </td>
+
+                                <td>
+                                    {{ application.created_at.strftime('%d-%m-%Y')
+                                       if application.created_at
+                                       else '--' }}
+                                </td>
+
+                                <td>
+
+                                    <a href="{{ url_for(
+                                        'main.prediction_result',
+                                        application_id=application.id
+                                    ) }}"
+                                       class="btn btn-outline-primary btn-sm">
+
+                                        View Result
+
+                                    </a>
+                                    <a href="{{ url_for(
+                                        'main.download_application_report',
+                                        application_id=application.id
+                                    ) }}"
+                                        class="btn btn-outline-danger btn-sm">
+                                          📄 PDF
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <h4>No Applications Yet</h4>
+
+                <p class="text-secondary">
+                    You haven't submitted a loan application yet.
+                </p>
+
+                <a href="{{ url_for('main.loan_application') }}"
+                   class="btn btn-primary">
+
+                    Create Your First Application
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="mt-4">
+
+            <a href="{{ url_for('main.dashboard') }}"
+               class="btn btn-outline-secondary">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

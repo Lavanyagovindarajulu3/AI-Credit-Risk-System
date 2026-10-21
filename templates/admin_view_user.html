@@ -1,0 +1,544 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+User Details - Admin
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-person-circle
+                          text-primary me-2"></i>
+
+                User Details
+
+            </h2>
+
+            <p class="text-secondary mb-0">
+                View registered user information and applications.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin_users') }}"
+           class="btn btn-outline-primary">
+
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Users
+
+        </a>
+
+    </div>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages =
+        get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ category }}
+                            alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="bi bi-info-circle me-2"></i>
+
+                    {{ message }}
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             USER PROFILE
+             ================================================= -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center p-4">
+
+                    <!-- PROFILE ICON -->
+
+                    <div class="rounded-circle
+                                bg-primary
+                                bg-opacity-10
+                                text-primary
+                                d-flex
+                                align-items-center
+                                justify-content-center
+                                mx-auto mb-3"
+                         style="width:90px;height:90px;">
+
+                        <i class="bi bi-person fs-1"></i>
+
+                    </div>
+
+
+                    <!-- NAME -->
+
+                    <h4 class="fw-bold mb-1">
+
+                        {{ user.full_name
+                           |default(
+                               user.name,
+                               true
+                           )
+                           |default(
+                               'User',
+                               true
+                           ) }}
+
+                    </h4>
+
+
+                    <!-- EMAIL -->
+
+                    <p class="text-secondary mb-3">
+
+                        {{ user.email|default('--') }}
+
+                    </p>
+
+
+                    <!-- STATUS -->
+
+                    {% if user.status is defined
+                          and user.status
+                          in ['inactive',
+                              'disabled',
+                              'blocked'] %}
+
+                        <span class="badge bg-danger">
+
+                            <i class="bi bi-x-circle me-1"></i>
+
+                            Inactive
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-success">
+
+                            <i class="bi bi-check-circle me-1"></i>
+
+                            Active
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <hr class="my-4">
+
+
+                    <!-- USER DETAILS -->
+
+                    <div class="text-start">
+
+                        <div class="mb-3">
+
+                            <small class="text-secondary d-block">
+                                User ID
+                            </small>
+
+                            <strong>
+                                #{{ user.id }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <small class="text-secondary d-block">
+                                Phone
+                            </small>
+
+                            <strong>
+                                {{ user.phone|default('--') }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <small class="text-secondary d-block">
+                                Registration Date
+                            </small>
+
+                            <strong>
+                                {{ user.created_at|default('--') }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY NOTICE -->
+
+            <div class="alert alert-info border-0 mt-4">
+
+                <div class="d-flex">
+
+                    <i class="bi bi-shield-check
+                              fs-5 me-2"></i>
+
+                    <div>
+
+                        <strong>
+                            Administrator View
+                        </strong>
+
+                        <p class="small mb-0 mt-1">
+
+                            This information is available only
+                            to authorized administrators.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             USER APPLICATIONS
+             ================================================= -->
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white py-3">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <h5 class="fw-bold mb-0">
+
+                            <i class="bi bi-file-earmark-text
+                                      text-primary me-2"></i>
+
+                            Loan Applications
+
+                        </h5>
+
+                        <span class="badge bg-primary">
+
+                            {{ applications|length
+                               if applications is defined
+                               else 0 }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+                    {% if applications %}
+
+                        <div class="table-responsive">
+
+                            <table class="table
+                                          table-hover
+                                          mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+
+                                        <th class="px-3">
+                                            ID
+                                        </th>
+
+                                        <th>
+                                            Loan Amount
+                                        </th>
+
+                                        <th>
+                                            Credit Score
+                                        </th>
+
+                                        <th>
+                                            Risk
+                                        </th>
+
+                                        <th>
+                                            Recommendation
+                                        </th>
+
+                                        <th>
+                                            Date
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for application
+                                         in applications %}
+
+                                        <tr>
+
+                                            <!-- ID -->
+
+                                            <td class="px-3">
+
+                                                <strong>
+                                                    #{{ application.id }}
+                                                </strong>
+
+                                            </td>
+
+
+                                            <!-- LOAN AMOUNT -->
+
+                                            <td>
+
+                                                {% if application.loan_amount
+                                                      is defined %}
+
+                                                    ₹{{ "{:,.2f}".format(
+                                                        application.loan_amount|float
+                                                    ) }}
+
+                                                {% else %}
+
+                                                    --
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- CREDIT SCORE -->
+
+                                            <td>
+
+                                                {% if application.credit_score
+                                                      is defined
+                                                      and application.credit_score
+                                                      is not none %}
+
+                                                    {% set score =
+                                                        application.credit_score|float %}
+
+                                                    <strong
+                                                        class="
+                                                        {% if score >= 750 %}
+                                                            text-success
+                                                        {% elif score >= 600 %}
+                                                            text-warning
+                                                        {% else %}
+                                                            text-danger
+                                                        {% endif %}
+                                                        ">
+
+                                                        {{ application.credit_score }}
+
+                                                    </strong>
+
+                                                {% else %}
+
+                                                    --
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- RISK -->
+
+                                            <td>
+
+                                                {% set risk =
+                                                    application.risk_level
+                                                    |default(
+                                                        'Pending',
+                                                        true
+                                                    ) %}
+
+                                                {% if risk|lower == 'low' %}
+
+                                                    <span class="badge bg-success">
+                                                        Low
+                                                    </span>
+
+                                                {% elif risk|lower == 'medium' %}
+
+                                                    <span class="badge
+                                                                 bg-warning
+                                                                 text-dark">
+                                                        Medium
+                                                    </span>
+
+                                                {% elif risk|lower == 'high' %}
+
+                                                    <span class="badge bg-danger">
+                                                        High
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="badge bg-secondary">
+                                                        Pending
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- RECOMMENDATION -->
+
+                                            <td>
+
+                                                {% set recommendation =
+                                                    application.recommendation
+                                                    |default(
+                                                        'Pending',
+                                                        true
+                                                    ) %}
+
+                                                {% if recommendation|lower
+                                                      == 'approve' %}
+
+                                                    <span class="badge bg-success">
+                                                        Approve
+                                                    </span>
+
+                                                {% elif recommendation|lower
+                                                      == 'review' %}
+
+                                                    <span class="badge
+                                                                 bg-warning
+                                                                 text-dark">
+                                                        Review
+                                                    </span>
+
+                                                {% elif recommendation|lower
+                                                      == 'reject' %}
+
+                                                    <span class="badge bg-danger">
+                                                        Reject
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="badge bg-secondary">
+                                                        Pending
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- DATE -->
+
+                                            <td>
+
+                                                <small>
+                                                    {{ application.created_at
+                                                       |default('--') }}
+                                                </small>
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <!-- EMPTY STATE -->
+
+                        <div class="empty-state py-5">
+
+                            <div class="empty-state-icon mb-3">
+
+                                <i class="bi bi-file-earmark-x"></i>
+
+                            </div>
+
+                            <h5 class="fw-bold">
+                                No Loan Applications
+                            </h5>
+
+                            <p class="text-secondary mb-0">
+
+                                This user has not submitted
+                                any loan applications yet.
+
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

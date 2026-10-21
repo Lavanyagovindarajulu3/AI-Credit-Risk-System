@@ -1,0 +1,531 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Credit Risk Result - AI Credit Risk Assessment
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5 bg-light min-vh-100">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="text-center mb-4">
+
+            <div class="bg-primary bg-opacity-10
+                        text-primary
+                        rounded-circle
+                        d-inline-flex
+                        align-items-center
+                        justify-content-center mb-3"
+                 style="width: 75px; height: 75px;">
+
+                <i class="bi bi-robot fs-2"></i>
+
+            </div>
+
+            <h2 class="fw-bold">
+                AI Credit Risk Assessment Result
+            </h2>
+
+            <p class="text-secondary">
+                Your loan application has been evaluated using
+                the Random Forest machine-learning model.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             RESULT CARD
+        ====================================================== -->
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-9">
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4 p-md-5">
+
+                        <!-- RESULT STATUS -->
+
+                        <div class="text-center mb-4">
+
+                            {% if application.risk_level == 'Low' %}
+
+                                <div class="text-success">
+
+                                    <i class="bi bi-shield-check"
+                                       style="font-size: 4rem;">
+                                    </i>
+
+                                </div>
+
+                                <h3 class="fw-bold text-success mt-2">
+                                    Low Credit Risk
+                                </h3>
+
+                                <p class="text-secondary mb-0">
+                                    The applicant demonstrates a relatively
+                                    low level of credit risk.
+                                </p>
+
+                            {% elif application.risk_level == 'Medium' %}
+
+                                <div class="text-warning">
+
+                                    <i class="bi bi-shield-exclamation"
+                                       style="font-size: 4rem;">
+                                    </i>
+
+                                </div>
+
+                                <h3 class="fw-bold text-warning mt-2">
+                                    Medium Credit Risk
+                                </h3>
+
+                                <p class="text-secondary mb-0">
+                                    The application requires additional
+                                    review before making a final decision.
+                                </p>
+
+                            {% elif application.risk_level == 'High' %}
+
+                                <div class="text-danger">
+
+                                    <i class="bi bi-shield-x"
+                                       style="font-size: 4rem;">
+                                    </i>
+
+                                </div>
+
+                                <h3 class="fw-bold text-danger mt-2">
+                                    High Credit Risk
+                                </h3>
+
+                                <p class="text-secondary mb-0">
+                                    The applicant demonstrates a relatively
+                                    high level of credit risk.
+                                </p>
+
+                            {% else %}
+
+                                <div class="text-secondary">
+
+                                    <i class="bi bi-hourglass-split"
+                                       style="font-size: 4rem;">
+                                    </i>
+
+                                </div>
+
+                                <h3 class="fw-bold mt-2">
+                                    Assessment Pending
+                                </h3>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CREDIT SCORE
+                        ================================================== -->
+
+                        <div class="row justify-content-center mb-5">
+
+                            <div class="col-md-6">
+
+                                <div class="border rounded-4
+                                            text-center p-4">
+
+                                    <p class="text-secondary mb-1">
+                                        Generated Credit Score
+                                    </p>
+
+                                    <div class="display-4 fw-bold text-primary">
+
+                                        {{ application.credit_score
+                                           |default('--') }}
+
+                                    </div>
+
+                                    <small class="text-secondary">
+
+                                        Score range: 300 - 900
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             RECOMMENDATION
+                        ================================================== -->
+
+                        <div class="text-center mb-5">
+
+                            <p class="text-secondary mb-2">
+                                Loan Recommendation
+                            </p>
+
+                            {% if application.recommendation == 'Approve' %}
+
+                                <span class="badge bg-success
+                                             fs-5
+                                             px-4
+                                             py-3">
+
+                                    <i class="bi bi-check-circle me-2"></i>
+
+                                    APPROVE
+
+                                </span>
+
+                            {% elif application.recommendation == 'Review' %}
+
+                                <span class="badge bg-warning
+                                             text-dark
+                                             fs-5
+                                             px-4
+                                             py-3">
+
+                                    <i class="bi bi-exclamation-circle me-2"></i>
+
+                                    REVIEW
+
+                                </span>
+
+                            {% elif application.recommendation == 'Reject' %}
+
+                                <span class="badge bg-danger
+                                             fs-5
+                                             px-4
+                                             py-3">
+
+                                    <i class="bi bi-x-circle me-2"></i>
+
+                                    REJECT
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary
+                                             fs-5
+                                             px-4
+                                             py-3">
+
+                                    PENDING
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================================
+                             APPLICATION DETAILS
+                        ================================================== -->
+
+                        <div class="border-top pt-4">
+
+                            <h5 class="fw-bold mb-4">
+
+                                <i class="bi bi-file-earmark-text
+                                          text-primary me-2">
+                                </i>
+
+                                Application Details
+
+                            </h5>
+
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Application ID
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            #{{ application.id }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Applicant
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            {{ application.full_name
+                                               |default(user.full_name)
+                                               |default('--') }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Loan Amount
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            ₹{{ "{:,.2f}".format(
+                                                application.loan_amount|float
+                                            ) }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Loan Term
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            {{ application.loan_term
+                                               |default('--') }}
+                                            months
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Annual Income
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            ₹{{ "{:,.2f}".format(
+                                                application.annual_income|float
+                                            ) }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Employment Status
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            {{ application.employment_status
+                                               |default('--') }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Existing Debt
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            ₹{{ "{:,.2f}".format(
+                                                application.existing_debt|float
+                                            ) }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="bg-light rounded-3 p-3">
+
+                                        <small class="text-secondary d-block">
+                                            Previous Defaults
+                                        </small>
+
+                                        <span class="fw-semibold">
+                                            {{ application.previous_defaults
+                                               |default(0) }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             AI EXPLANATION
+                        ================================================== -->
+
+                        <div class="alert alert-info border-0 mt-4 mb-0">
+
+                            <div class="d-flex">
+
+                                <i class="bi bi-info-circle-fill
+                                          fs-5
+                                          me-2">
+                                </i>
+
+                                <div>
+
+                                    <strong>
+                                        How this result is generated
+                                    </strong>
+
+                                    <p class="small mb-0 mt-1">
+
+                                        The system analyzes the financial
+                                        information provided in the loan
+                                        application using a trained
+                                        Random Forest machine-learning
+                                        model. The generated score and
+                                        recommendation are intended to
+                                        support credit-risk assessment.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     ACTION BUTTONS
+                ====================================================== -->
+
+                <div class="d-flex
+                            flex-column flex-md-row
+                            justify-content-center
+                            gap-2">
+
+                    <a href="{{ url_for('main.generate_report',
+                                        application_id=application.id) }}"
+                       class="btn btn-danger"
+                       target="_blank">
+
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+
+                        Download PDF Report
+
+                    </a>
+
+
+                    <a href="{{ url_for('main.reports') }}"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-bar-chart me-2"></i>
+
+                        View Reports
+
+                    </a>
+
+
+                    <a href="{{ url_for('main.loan_application') }}"
+                       class="btn btn-outline-success">
+
+                        <i class="bi bi-plus-circle me-2"></i>
+
+                        New Application
+
+                    </a>
+
+
+                    <a href="{{ url_for('main.dashboard') }}"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-speedometer2 me-2"></i>
+
+                        Dashboard
+
+                    </a>
+
+                </div>
+
+
+                <!-- =====================================================
+                     DISCLAIMER
+                ====================================================== -->
+
+                <div class="text-center mt-4">
+
+                    <small class="text-secondary">
+
+                        <i class="bi bi-shield-check me-1"></i>
+
+                        AI-generated results are for educational and
+                        decision-support purposes and should not be
+                        considered a substitute for professional
+                        financial assessment.
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+```

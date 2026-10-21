@@ -1,0 +1,43 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.2rem;
+}
+
+.navbar .nav-link {
+    font-weight: 500;
+}
+
+/* Login */
+.login-icon {
+    font-size: 60px;
+    color: #0d6efd;
+}
+
+/* Cards */
+.card {
+    border-radius: 15px;
+}
+
+/* Form */
+.form-control {
+    min-height: 45px;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+}
+
+/* Footer */
+footer {
+    margin-top: 80px;
+}

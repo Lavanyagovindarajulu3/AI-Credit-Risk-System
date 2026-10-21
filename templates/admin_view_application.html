@@ -1,0 +1,609 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Application Details - Admin
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-file-earmark-text
+                          text-primary me-2"></i>
+
+                Application Details
+
+            </h2>
+
+            <p class="text-secondary mb-0">
+
+                Review applicant information and AI assessment.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="{{ url_for('admin_applications') }}"
+               class="btn btn-outline-primary">
+
+                <i class="bi bi-arrow-left me-2"></i>
+
+                Back to Applications
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages =
+        get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ category }}
+                            alert-dismissible fade show"
+                     role="alert">
+
+                    {{ message }}
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             APPLICANT INFORMATION
+             ================================================= -->
+
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-person
+                                  text-primary me-2"></i>
+
+                        Applicant Information
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                Application ID
+                            </label>
+
+                            <div class="fw-semibold">
+                                #{{ application.id }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                User ID
+                            </label>
+
+                            <div class="fw-semibold">
+                                {{ application.user_id|default('--') }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                Full Name
+                            </label>
+
+                            <div class="fw-semibold">
+                                {{ application.full_name
+                                   |default(
+                                       application.name,
+                                       true
+                                   )
+                                   |default('--', true) }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                Email
+                            </label>
+
+                            <div class="fw-semibold">
+                                {{ application.email|default('--') }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                Phone
+                            </label>
+
+                            <div class="fw-semibold">
+                                {{ application.phone|default('--') }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="text-secondary small">
+                                Application Date
+                            </label>
+
+                            <div class="fw-semibold">
+                                {{ application.created_at|default('--') }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FINANCIAL INFORMATION
+                 ================================================= -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-cash-stack
+                                  text-success me-2"></i>
+
+                        Financial Information
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Annual Income
+                                </small>
+
+                                <span class="fw-bold">
+                                    ₹{{ "{:,.2f}".format(
+                                        application.annual_income|float
+                                    ) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Existing Debt
+                                </small>
+
+                                <span class="fw-bold">
+                                    ₹{{ "{:,.2f}".format(
+                                        application.existing_debt|float
+                                    ) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Loan Amount
+                                </small>
+
+                                <span class="fw-bold">
+                                    ₹{{ "{:,.2f}".format(
+                                        application.loan_amount|float
+                                    ) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Loan Term
+                                </small>
+
+                                <span class="fw-bold">
+                                    {{ application.loan_term|default('--') }}
+                                    months
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Employment Status
+                                </small>
+
+                                <span class="fw-bold">
+                                    {{ application.employment_status
+                                       |default('--') }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="bg-light rounded-3 p-3">
+
+                                <small class="text-secondary d-block">
+                                    Previous Defaults
+                                </small>
+
+                                <span class="fw-bold">
+                                    {{ application.previous_defaults
+                                       |default(0) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             AI ASSESSMENT
+             ================================================= -->
+
+        <div class="col-lg-5">
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-robot
+                                  text-primary me-2"></i>
+
+                        AI Assessment
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body text-center">
+
+
+                    <!-- CREDIT SCORE -->
+
+                    <p class="text-secondary mb-1">
+                        Credit Score
+                    </p>
+
+                    <div class="display-3 fw-bold text-primary">
+
+                        {{ application.credit_score|default('--') }}
+
+                    </div>
+
+                    <small class="text-secondary">
+                        Score range: 300 - 900
+                    </small>
+
+
+                    <hr class="my-4">
+
+
+                    <!-- RISK -->
+
+                    <p class="text-secondary mb-2">
+                        Risk Level
+                    </p>
+
+                    {% set risk =
+                        application.risk_level
+                        |default('Pending', true) %}
+
+                    {% if risk|lower == 'low' %}
+
+                        <span class="badge bg-success fs-6 px-4 py-2">
+
+                            <i class="bi bi-shield-check me-1"></i>
+
+                            LOW RISK
+
+                        </span>
+
+                    {% elif risk|lower == 'medium' %}
+
+                        <span class="badge
+                                     bg-warning
+                                     text-dark
+                                     fs-6
+                                     px-4
+                                     py-2">
+
+                            <i class="bi bi-shield-exclamation me-1"></i>
+
+                            MEDIUM RISK
+
+                        </span>
+
+                    {% elif risk|lower == 'high' %}
+
+                        <span class="badge bg-danger fs-6 px-4 py-2">
+
+                            <i class="bi bi-shield-x me-1"></i>
+
+                            HIGH RISK
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary fs-6 px-4 py-2">
+
+                            PENDING
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <hr class="my-4">
+
+
+                    <!-- RECOMMENDATION -->
+
+                    <p class="text-secondary mb-2">
+                        Loan Recommendation
+                    </p>
+
+                    {% set recommendation =
+                        application.recommendation
+                        |default('Pending', true) %}
+
+                    {% if recommendation|lower == 'approve' %}
+
+                        <div class="alert alert-success mb-0">
+
+                            <i class="bi bi-check-circle-fill
+                                      fs-4 me-2"></i>
+
+                            <strong>
+                                APPROVE
+                            </strong>
+
+                        </div>
+
+                    {% elif recommendation|lower == 'review' %}
+
+                        <div class="alert alert-warning mb-0">
+
+                            <i class="bi bi-exclamation-circle-fill
+                                      fs-4 me-2"></i>
+
+                            <strong>
+                                REVIEW
+                            </strong>
+
+                        </div>
+
+                    {% elif recommendation|lower == 'reject' %}
+
+                        <div class="alert alert-danger mb-0">
+
+                            <i class="bi bi-x-circle-fill
+                                      fs-4 me-2"></i>
+
+                            <strong>
+                                REJECT
+                            </strong>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-secondary mb-0">
+
+                            <strong>
+                                PENDING
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-gear
+                                  text-primary me-2"></i>
+
+                        Actions
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{{ url_for(
+                                'generate_report',
+                                application_id=application.id
+                            ) }}"
+                            target="_blank"
+                            class="btn btn-danger">
+
+                            <i class="bi bi-file-earmark-pdf me-2"></i>
+
+                            Generate PDF Report
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for(
+                                'admin_applications'
+                            ) }}"
+                            class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+
+                            Back to Applications
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI INFORMATION
+         ===================================================== -->
+
+    <div class="alert alert-info border-0 mt-4">
+
+        <div class="d-flex">
+
+            <i class="bi bi-info-circle-fill
+                      fs-5 me-2"></i>
+
+            <div>
+
+                <strong>
+                    AI Assessment Notice
+                </strong>
+
+                <p class="small mb-0 mt-1">
+
+                    The credit score, risk classification,
+                    and recommendation are generated by the
+                    machine-learning model based on the
+                    submitted application information.
+                    The result should be used as decision
+                    support rather than as the sole basis
+                    for a financial decision.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

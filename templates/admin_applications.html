@@ -1,0 +1,936 @@
+{% extends "base.html" %}
+
+{% block title %}
+Loan Applications - Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                Loan Applications
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Review loan applications and AI-generated
+                credit-risk assessments.
+            </p>
+
+        </div>
+
+        <!-- CORRECT ADMIN DASHBOARD BUTTON -->
+
+        <div>
+
+            <a href="{{ url_for('main.admin_dashboard') }}"
+               class="btn btn-outline-primary">
+
+                <i class="bi bi-speedometer2 me-2"></i>
+                Admin Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FLASH MESSAGES
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ category }}
+                            alert-dismissible fade show"
+                     role="alert">
+
+                    <i class="bi bi-info-circle me-2"></i>
+
+                    {{ message }}
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- TOTAL -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <p class="text-secondary mb-1">
+                                Total Applications
+                            </p>
+
+                            <h3 class="fw-bold mb-0">
+
+                                {{ applications|length
+                                   if applications
+                                   else 0 }}
+
+                            </h3>
+
+                        </div>
+
+                        <div class="p-3
+                                    bg-primary
+                                    bg-opacity-10
+                                    text-primary
+                                    rounded">
+
+                            <i class="bi bi-files fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <p class="text-secondary mb-1">
+                                Approved
+                            </p>
+
+                            <h3 class="fw-bold text-success mb-0">
+
+                                {% set approved_total = 0 %}
+
+                                {% for application in applications or [] %}
+
+                                    {% if application.application_status
+                                          and application.application_status|lower
+                                          == 'approved' %}
+
+                                        {% set approved_total =
+                                              approved_total + 1 %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                {{ approved_total }}
+
+                            </h3>
+
+                        </div>
+
+                        <div class="p-3
+                                    bg-success
+                                    bg-opacity-10
+                                    text-success
+                                    rounded">
+
+                            <i class="bi bi-check-circle fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- UNDER REVIEW -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <p class="text-secondary mb-1">
+                                Under Review
+                            </p>
+
+                            <h3 class="fw-bold text-warning mb-0">
+
+                                {% set review_total = 0 %}
+
+                                {% for application in applications or [] %}
+
+                                    {% if application.application_status
+                                          and application.application_status|lower
+                                          in ['pending', 'review'] %}
+
+                                        {% set review_total =
+                                              review_total + 1 %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                {{ review_total }}
+
+                            </h3>
+
+                        </div>
+
+                        <div class="p-3
+                                    bg-warning
+                                    bg-opacity-10
+                                    text-warning
+                                    rounded">
+
+                            <i class="bi bi-hourglass-split fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REJECTED -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <p class="text-secondary mb-1">
+                                Rejected
+                            </p>
+
+                            <h3 class="fw-bold text-danger mb-0">
+
+                                {% set rejected_total = 0 %}
+
+                                {% for application in applications or [] %}
+
+                                    {% if application.application_status
+                                          and application.application_status|lower
+                                          == 'rejected' %}
+
+                                        {% set rejected_total =
+                                              rejected_total + 1 %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                {{ rejected_total }}
+
+                            </h3>
+
+                        </div>
+
+                        <div class="p-3
+                                    bg-danger
+                                    bg-opacity-10
+                                    text-danger
+                                    rounded">
+
+                            <i class="bi bi-x-circle fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ALL APPLICATIONS
+    ====================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <!-- CARD HEADER -->
+
+        <div class="card-header bg-white py-3">
+
+            <div class="row align-items-center g-3">
+
+                <div class="col-lg-5">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-list-ul text-primary me-2"></i>
+
+                        All Applications
+
+                    </h5>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="col-lg-4">
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="bi bi-search"></i>
+
+                        </span>
+
+                        <input
+                            type="search"
+                            id="applicationSearch"
+                            class="form-control"
+                            placeholder="Search applications..."
+                            autocomplete="off">
+
+                    </div>
+
+                </div>
+
+
+                <!-- RISK FILTER -->
+
+                <div class="col-lg-3">
+
+                    <select id="riskFilter"
+                            class="form-select">
+
+                        <option value="">
+                            All Risk Levels
+                        </option>
+
+                        <option value="low">
+                            Low Risk
+                        </option>
+
+                        <option value="medium">
+                            Medium Risk
+                        </option>
+
+                        <option value="high">
+                            High Risk
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             APPLICATION TABLE
+        ================================================== -->
+
+        <div class="card-body p-0">
+
+            {% if applications %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0"
+                           id="applicationsTable">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    ID
+                                </th>
+
+                                <th>
+                                    Applicant
+                                </th>
+
+                                <th>
+                                    Loan Amount
+                                </th>
+
+                                <th>
+                                    Credit Score
+                                </th>
+
+                                <th>
+                                    Risk
+                                </th>
+
+                                <th>
+                                    Recommendation
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th class="text-center">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for application in applications %}
+
+                                <tr>
+
+                                    <!-- ID -->
+
+                                    <td class="px-3">
+
+                                        <span class="fw-bold">
+                                            #{{ application.id }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- APPLICANT -->
+
+                                    <td>
+
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="rounded-circle
+                                                        bg-primary
+                                                        bg-opacity-10
+                                                        text-primary
+                                                        d-flex
+                                                        align-items-center
+                                                        justify-content-center
+                                                        me-2"
+                                                 style="width:40px;
+                                                        height:40px;">
+
+                                                <i class="bi bi-person"></i>
+
+                                            </div>
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ application.applicant_name
+                                                       |default(
+                                                           application.full_name,
+                                                           true
+                                                       )
+                                                       |default(
+                                                           application.name,
+                                                           true
+                                                       )
+                                                       |default(
+                                                           'Applicant',
+                                                           true
+                                                       ) }}
+
+                                                </div>
+
+                                                <small class="text-secondary">
+
+                                                    User ID:
+                                                    {{ application.user_id
+                                                       |default('--') }}
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- LOAN AMOUNT -->
+
+                                    <td>
+
+                                        {% if application.loan_amount
+                                              is not none %}
+
+                                            ₹{{ "{:,.2f}".format(
+                                                application.loan_amount|float
+                                            ) }}
+
+                                        {% else %}
+
+                                            --
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CREDIT SCORE -->
+
+                                    <td>
+
+                                        {% if application.credit_score
+                                              is not none %}
+
+                                            <span class="fw-bold
+                                                {% if application.credit_score|float >= 750 %}
+                                                    text-success
+                                                {% elif application.credit_score|float >= 600 %}
+                                                    text-warning
+                                                {% else %}
+                                                    text-danger
+                                                {% endif %}">
+
+                                                {{ application.credit_score }}
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-secondary">
+                                                --
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RISK -->
+
+                                    <td>
+
+                                        {% set risk =
+                                            application.risk_level
+                                            |default('', true)
+                                        %}
+
+                                        {% if risk|lower == 'low' %}
+
+                                            <span class="badge bg-success">
+                                                Low
+                                            </span>
+
+                                        {% elif risk|lower == 'medium' %}
+
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+                                                Medium
+                                            </span>
+
+                                        {% elif risk|lower == 'high' %}
+
+                                            <span class="badge bg-danger">
+                                                High
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RECOMMENDATION -->
+
+                                    <td>
+
+                                        {% set recommendation =
+                                            application.recommendation
+                                            |default('', true)
+                                        %}
+
+                                        {% if recommendation|lower
+                                              == 'approve' %}
+
+                                            <span class="badge bg-success">
+                                                Approve
+                                            </span>
+
+                                        {% elif recommendation|lower
+                                              == 'review' %}
+
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+                                                Review
+                                            </span>
+
+                                        {% elif recommendation|lower
+                                              == 'reject' %}
+
+                                            <span class="badge bg-danger">
+                                                Reject
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        {% set status =
+                                            application.application_status
+                                            |default('', true)
+                                        %}
+
+                                        {% if status|lower == 'approved' %}
+
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+
+                                        {% elif status|lower == 'rejected' %}
+
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        {% if application.created_at %}
+
+                                            {{ application.created_at.strftime(
+                                                "%d-%m-%Y"
+                                            ) }}
+
+                                        {% else %}
+
+                                            --
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td class="text-center">
+
+                                        <!-- IMPORTANT:
+                                             This must match:
+                                             @main.route(...)
+                                             def view_application(...)
+                                        -->
+
+                                        <a
+                                            href="{{ url_for(
+                                                'main.view_application',
+                                                application_id=application.id
+                                            ) }}"
+                                            class="btn btn-sm
+                                                   btn-outline-primary"
+                                            title="View Application">
+
+                                            <i class="bi bi-eye"></i>
+                                            View
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY STATE -->
+
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-file-earmark-x
+                                  display-4
+                                  text-secondary">
+                        </i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        No Applications Found
+                    </h5>
+
+                    <p class="text-secondary mb-0">
+                        No loan applications have been submitted yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="alert alert-info border-0 mt-4">
+
+        <div class="d-flex">
+
+            <i class="bi bi-robot fs-5 me-2"></i>
+
+            <div>
+
+                <strong>
+                    AI Risk Assessment
+                </strong>
+
+                <p class="small mb-0 mt-1">
+
+                    Risk levels and recommendations shown here
+                    are generated by the Random Forest machine
+                    learning model based on the applicant's
+                    financial information.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SEARCH AND RISK FILTER
+========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const searchInput =
+            document.getElementById("applicationSearch");
+
+        const riskFilter =
+            document.getElementById("riskFilter");
+
+        const table =
+            document.getElementById("applicationsTable");
+
+
+        if (!table) {
+            return;
+        }
+
+
+        function filterApplications() {
+
+            const searchTerm =
+                searchInput
+                    ? searchInput.value
+                        .toLowerCase()
+                        .trim()
+                    : "";
+
+
+            const selectedRisk =
+                riskFilter
+                    ? riskFilter.value
+                        .toLowerCase()
+                        .trim()
+                    : "";
+
+
+            const rows =
+                table.querySelectorAll("tbody tr");
+
+
+            rows.forEach(function (row) {
+
+                const rowText =
+                    row.textContent
+                        .toLowerCase();
+
+
+                const matchesSearch =
+                    !searchTerm ||
+                    rowText.includes(searchTerm);
+
+
+                let matchesRisk = true;
+
+
+                if (selectedRisk) {
+
+                    const riskCell =
+                        row.children[4];
+
+
+                    const riskText =
+                        riskCell
+                            ? riskCell.textContent
+                                .toLowerCase()
+                                .trim()
+                            : "";
+
+
+                    matchesRisk =
+                        riskText.includes(selectedRisk);
+
+                }
+
+
+                row.style.display =
+                    matchesSearch && matchesRisk
+                        ? ""
+                        : "none";
+
+            });
+
+        }
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                filterApplications
+            );
+
+        }
+
+
+        if (riskFilter) {
+
+            riskFilter.addEventListener(
+                "change",
+                filterApplications
+            );
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

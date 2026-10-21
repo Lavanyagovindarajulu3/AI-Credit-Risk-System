@@ -1,0 +1,662 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Loan History - AI Credit Risk Assessment
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-clock-history
+                          text-primary me-2"></i>
+
+                Loan History
+
+            </h2>
+
+            <p class="text-secondary mb-0">
+
+                View your previous loan applications and
+                AI credit-risk assessments.
+
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for('main.dashboard') }}"
+           class="btn btn-outline-primary">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
+            Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FLASH MESSAGES
+         ===================================================== -->
+
+    {% with messages =
+        get_flashed_messages(
+            with_categories=true
+        ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert
+                            alert-{{ category }}
+                            alert-dismissible
+                            fade show"
+                     role="alert">
+
+                    <i class="bi bi-info-circle me-2"></i>
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- TOTAL -->
+
+        <div class="col-sm-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-secondary">
+                                Applications
+                            </small>
+
+                            <h3 class="fw-bold mb-0">
+
+                                {{ applications|length
+                                   if applications is defined
+                                   else 0 }}
+
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-file-earmark-text
+                                  fs-2
+                                  text-primary"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+
+        <div class="col-sm-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-secondary">
+                                Approved
+                            </small>
+
+                            <h3 class="fw-bold
+                                       text-success
+                                       mb-0">
+
+                                {{ approved_count|default(0) }}
+
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-check-circle
+                                  fs-2
+                                  text-success"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REVIEW -->
+
+        <div class="col-sm-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-secondary">
+                                Under Review
+                            </small>
+
+                            <h3 class="fw-bold
+                                       text-warning
+                                       mb-0">
+
+                                {{ review_count|default(0) }}
+
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-hourglass-split
+                                  fs-2
+                                  text-warning"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REJECTED -->
+
+        <div class="col-sm-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-secondary">
+                                Rejected
+                            </small>
+
+                            <h3 class="fw-bold
+                                       text-danger
+                                       mb-0">
+
+                                {{ rejected_count|default(0) }}
+
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-x-circle
+                                  fs-2
+                                  text-danger"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION LIST
+         ===================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-center">
+
+                <h5 class="fw-bold mb-0">
+
+                    <i class="bi bi-list-ul
+                              text-primary me-2"></i>
+
+                    My Applications
+
+                </h5>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if applications %}
+
+                <div class="table-responsive">
+
+                    <table class="table
+                                  table-hover
+                                  align-middle
+                                  mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    Application
+                                </th>
+
+                                <th>
+                                    Loan Amount
+                                </th>
+
+                                <th>
+                                    Credit Score
+                                </th>
+
+                                <th>
+                                    Risk Level
+                                </th>
+
+                                <th>
+                                    Recommendation
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th class="text-center">
+                                    Report
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for application
+                                 in applications %}
+
+                                <tr>
+
+                                    <!-- APPLICATION -->
+
+                                    <td class="px-3">
+
+                                        <span class="fw-semibold">
+
+                                            #{{ application.id }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- LOAN AMOUNT -->
+
+                                    <td>
+
+                                        {% if application.loan_amount
+                                              is defined %}
+
+                                            ₹{{ "{:,.2f}".format(
+                                                application.loan_amount|float
+                                            ) }}
+
+                                        {% else %}
+
+                                            --
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CREDIT SCORE -->
+
+                                    <td>
+
+                                        {% if application.credit_score
+                                              is defined
+                                              and application.credit_score
+                                              is not none %}
+
+                                            {% set score =
+                                                application.credit_score|float %}
+
+                                            <span
+                                                class="fw-bold
+                                                {% if score >= 750 %}
+                                                    text-success
+                                                {% elif score >= 600 %}
+                                                    text-warning
+                                                {% else %}
+                                                    text-danger
+                                                {% endif %}">
+
+                                                {{ application.credit_score }}
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-secondary">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RISK LEVEL -->
+
+                                    <td>
+
+                                        {% set risk =
+                                            application.risk_level
+                                            |default(
+                                                application.risk,
+                                                true
+                                            )
+                                            |default(
+                                                'Pending',
+                                                true
+                                            ) %}
+
+
+                                        {% if risk|lower == 'low' %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-shield-check me-1"></i>
+
+                                                Low
+
+                                            </span>
+
+                                        {% elif risk|lower == 'medium' %}
+
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+
+                                                <i class="bi bi-shield-exclamation me-1"></i>
+
+                                                Medium
+
+                                            </span>
+
+                                        {% elif risk|lower == 'high' %}
+
+                                            <span class="badge bg-danger">
+
+                                                <i class="bi bi-shield-x me-1"></i>
+
+                                                High
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+
+                                                Pending
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RECOMMENDATION -->
+
+                                    <td>
+
+                                        {% set recommendation =
+                                            application.recommendation
+                                            |default(
+                                                'Pending',
+                                                true
+                                            ) %}
+
+
+                                        {% if recommendation|lower
+                                              == 'approve' %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-check me-1"></i>
+
+                                                Approve
+
+                                            </span>
+
+                                        {% elif recommendation|lower
+                                              == 'review' %}
+
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+
+                                                <i class="bi bi-clock me-1"></i>
+
+                                                Review
+
+                                            </span>
+
+                                        {% elif recommendation|lower
+                                              == 'reject' %}
+
+                                            <span class="badge bg-danger">
+
+                                                <i class="bi bi-x me-1"></i>
+
+                                                Reject
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+
+                                                Pending
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        <small class="text-secondary">
+
+                                            {{ application.created_at
+                                               |default('--') }}
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- PDF -->
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{{ url_for(
+                                                'generate_report',
+                                                application_id=application.id
+                                            ) }}"
+                                            target="_blank"
+                                            class="btn
+                                                   btn-sm
+                                                   btn-outline-danger"
+                                            title="Download PDF Report"
+                                            data-bs-toggle="tooltip">
+
+                                            <i class="bi bi-file-earmark-pdf"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY STATE -->
+
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-file-earmark-text
+                                  display-4
+                                  text-secondary">
+                        </i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        No Loan Applications
+                    </h5>
+
+                    <p class="text-secondary mb-4">
+
+                        You have not submitted any loan
+                        applications yet.
+
+                    </p>
+
+                    <a
+                        href="{{ url_for('main.loan_application') }}"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-2"></i>
+
+                        Apply for a Loan
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DISCLAIMER
+         ===================================================== -->
+
+    <div class="alert alert-info border-0 mt-4">
+
+        <div class="d-flex">
+
+            <i class="bi bi-info-circle-fill
+                      fs-5 me-2"></i>
+
+            <div>
+
+                <strong>
+                    About Your Assessment
+                </strong>
+
+                <p class="small mb-0 mt-1">
+
+                    Your credit score and risk classification
+                    are generated using the system's machine
+                    learning model. Results are intended as
+                    decision-support information.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

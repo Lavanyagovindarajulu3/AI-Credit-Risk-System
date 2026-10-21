@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}
+Application Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-file-earmark-text text-primary me-2"></i>
+            Loan Application Details
+        </h2>
+
+        <p class="text-secondary mb-0">
+            View complete details of the loan application.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- Application Details Card -->
+<div class="card border-0 shadow-sm">
+
+    <div class="card-header bg-white py-3">
+
+        <h5 class="fw-bold mb-0">
+            Application #{{ application.id }}
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="row g-4">
+
+            <!-- Applicant Name -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Applicant Name
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+                        {{ application.applicant_name or "Unknown" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Loan Amount -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Loan Amount
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+                        ₹{{ "{:,.2f}".format(application.loan_amount|float) }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Credit Score -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Credit Score
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.credit_score %}
+
+                            {{ application.credit_score }}
+
+                        {% else %}
+
+                            --
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Risk Level -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Risk Level
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.risk_level == "Low" %}
+
+                            <span class="badge bg-success">
+                                Low
+                            </span>
+
+                        {% elif application.risk_level == "Medium" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Medium
+                            </span>
+
+                        {% elif application.risk_level == "High" %}
+
+                            <span class="badge bg-danger">
+                                High
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recommendation -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Recommendation
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.recommendation == "Approve" %}
+
+                            <span class="badge bg-success">
+                                Approve
+                            </span>
+
+                        {% elif application.recommendation == "Review" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Review
+                            </span>
+
+                        {% elif application.recommendation == "Reject" %}
+
+                            <span class="badge bg-danger">
+                                Reject
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Application Status -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Application Status
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.application_status == "Approved" %}
+
+                            <span class="badge bg-success">
+                                Approved
+                            </span>
+
+                        {% elif application.application_status == "Rejected" %}
+
+                            <span class="badge bg-danger">
+                                Rejected
+                            </span>
+
+                        {% elif application.application_status == "Processed" %}
+
+                            <span class="badge bg-primary">
+                                Processed
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Risk Probability -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Risk Probability
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.risk_probability is not none %}
+
+                            {{ (application.risk_probability * 100)|round(2) }}%
+
+                        {% else %}
+
+                            --
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Application Date -->
+            <div class="col-md-6">
+
+                <div class="p-3 bg-light rounded">
+
+                    <strong>
+                        Application Date
+                    </strong>
+
+                    <p class="mb-0 mt-1">
+
+                        {% if application.created_at %}
+
+                            {{ application.created_at.strftime("%d-%m-%Y") }}
+
+                        {% else %}
+
+                            --
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="text-center mt-4">
+
+            <!-- PDF BUTTON -->
+
+            <a href="{{ url_for('main.generate_report',
+                                application_id=application.id) }}"
+               class="btn btn-danger me-2">
+
+                <i class="bi bi-file-earmark-pdf me-1"></i>
+
+                Download PDF Report
+
+            </a>
+
+
+            <!-- BACK BUTTON -->
+
+            <a href="{{ url_for('main.admin_applications') }}"
+               class="btn btn-outline-primary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back to Applications
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}
