@@ -1468,14 +1468,14 @@ def admin_applications():
             + str(error)
         )
 
+
 @main.route("/admin/application/<int:application_id>")
 def admin_view_application(application_id):
 
-    if "user_id" not in session:
+    if not admin_required():
         return redirect(url_for("main.login"))
 
     try:
-
         application = fetch_one(
             """
             SELECT *
@@ -1494,16 +1494,9 @@ def admin_view_application(application_id):
         )
 
     except Exception as error:
+        print("ADMIN VIEW APPLICATION ERROR:", error)
+        return "Unable to load application details.", 500
 
-        print(
-            "ADMIN VIEW APPLICATION ERROR:",
-            error
-        )
-
-        return (
-            "Admin View Application Error: "
-            + str(error)
-        ), 500
 # ============================================================
 # ADMIN VIEW USER APPLICATIONS
 # ============================================================
