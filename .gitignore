@@ -19,3 +19,5 @@ reports/*.pdf
 # Local admin/password setup utilities
 generate_hash.py
 app/generate_hash.py
+# Outdated database schema - do not upload or execute
+database/schema.sql

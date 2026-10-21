@@ -334,20 +334,18 @@ def register():
                 full_name,
                 name,
                 email,
-                password,
                 password_hash,
                 role
             )
             VALUES (
-                %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s
             )
             """,
             (
-                name,
-                name,
+                full_name,
+                full_name,
                 email,
-                password,
-                password_hash,
+               generate_password_hash(password),
                 "user"
             )
         )
