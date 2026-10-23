@@ -342,10 +342,10 @@ def register():
             )
             """,
             (
-                full_name,
-                full_name,
+                name,
+                name,
                 email,
-               generate_password_hash(password),
+                password_hash,
                 "user"
             )
         )
